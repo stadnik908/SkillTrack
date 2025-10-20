@@ -178,6 +178,27 @@
 
 ### Примеры экранов UI
 
+<img width="1920" height="875" alt="image" src="https://github.com/user-attachments/assets/a3fe0011-2fdf-40f2-81d8-9278f7b6235a" />
+
+<img width="1920" height="878" alt="image" src="https://github.com/user-attachments/assets/c9e034c5-0f85-42bf-abc4-3ff905c56cf9" />
+
+<img width="1900" height="879" alt="image" src="https://github.com/user-attachments/assets/80704e66-d9a9-4ae5-af96-70820318ad5e" />
+
+<img width="1899" height="877" alt="image" src="https://github.com/user-attachments/assets/cbd72c04-1181-4ddb-bf72-0f01883dcc28" />
+
+<img width="1898" height="879" alt="image" src="https://github.com/user-attachments/assets/07b5212b-a2f8-4f62-94eb-af7881cce016" />
+
+<img width="1903" height="878" alt="image" src="https://github.com/user-attachments/assets/21dfc18e-0e69-4dcb-b92b-d7b31c389f93" />
+
+<img width="1920" height="879" alt="image" src="https://github.com/user-attachments/assets/59061a12-8d2e-4f24-ab57-35d592131291" />
+
+<img width="1900" height="876" alt="image" src="https://github.com/user-attachments/assets/b90527c7-8318-45a1-98b5-8c4436714d01" />
+
+<img width="1920" height="876" alt="image" src="https://github.com/user-attachments/assets/2d52b3b4-edcf-45e7-b2ec-28c4c415c4d7" />
+
+<img width="1920" height="877" alt="image" src="https://github.com/user-attachments/assets/f16d390d-0c84-498c-95aa-f9ef6818dd18" />
+
+
 ---
 
 ## **Тестирование**
