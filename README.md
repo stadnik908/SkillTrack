@@ -178,6 +178,9 @@
 
 ### Примеры экранов UI
 
+Клиентская часть: https://github.com/stadnik908/SkillTrackKlient
+
+
 <img width="1920" height="875" alt="image" src="https://github.com/user-attachments/assets/a3fe0011-2fdf-40f2-81d8-9278f7b6235a" />
 
 <img width="1920" height="878" alt="image" src="https://github.com/user-attachments/assets/c9e034c5-0f85-42bf-abc4-3ff905c56cf9" />
