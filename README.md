@@ -326,11 +326,169 @@ public class CustomBearerTokenAccessDeniedHandler implements AccessDeniedHandler
 
 ### Unit-тесты
 
-Представить код тестов для пяти методов и его пояснение
+```@Test
+void testFindAll() {
+        Department dep = new Department();
+        DepartmentDto depDto = new DepartmentDto(1L, "Dept name", "Some description");
+
+        when(service.findAll()).thenReturn(List.of(dep));
+        when(toDtoConverter.convert(dep)).thenReturn(depDto);
+
+        Result result = controller.findAll();
+
+        assertTrue(result.isFlag());
+        assertEquals(StatusCode.SUCCESS, result.getCode());
+        assertEquals("Success Find All", result.getMessage());
+        assertEquals(1, ((List<?>) result.getData()).size());
+
+        verify(service, times(1)).findAll();
+        verify(toDtoConverter, times(1)).convert(dep);
+}
+```
+
+Тестовый метод testFindAll() предназначен для тщательной проверки того, как контроллер обрабатывает запрос на получение всех должностей. В начале создаётся объект Department, представляющий одну должность, и его DTO-аналог DepartmentDto, который должен получиться после конвертации. Далее через when(...).thenReturn(...) настраиваются моки: сервис должностей имитирует возврат списка из одной должности, а конвертер — преобразование этой должности в соответствующий DTO. После подготовки окружения вызывается метод контроллера controller.findAll(), который должен запросить данные у сервиса, затем для каждой найденной должности вызвать конвертер и сформировать итоговый объект Result. Тест проверяет, что контроллер возвращает результат, помеченный флагом успешности, содержит ожидаемый код (StatusCode.SUCCESS), корректное сообщение "Success Find All" и данные в виде списка, в котором действительно один элемент — это индикатор того, что логика получения и преобразования должностей работает как задумано. Финальные проверки через verify подтверждают, что метод сервиса findAll() и метод конвертера convert(dep) были вызваны ровно один раз, удостоверяя не только корректность результата, но и правильность взаимодействия между компонентами контроллера, сервиса и конвертера.
+
+```@Test
+void testSave() {
+        DepartmentDto dto = new DepartmentDto(1L, "Dept name", "Some description");
+        Department entity = new Department();
+        Department saved = new Department();
+        DepartmentDto savedDto = new DepartmentDto(1L, "Dept name", "Some description");
+
+        when(toConverter.convert(dto)).thenReturn(entity);
+        when(service.save(entity)).thenReturn(saved);
+        when(toDtoConverter.convert(saved)).thenReturn(savedDto);
+
+        Result result = controller.save(dto);
+
+        assertTrue(result.isFlag());
+        assertEquals(StatusCode.SUCCESS, result.getCode());
+        assertEquals("Success Save", result.getMessage());
+        assertEquals(savedDto, result.getData());
+
+        verify(toConverter).convert(dto);
+        verify(service).save(entity);
+        verify(toDtoConverter).convert(saved);
+}
+```
+
+Тестовый метод testSave() проверяет работу контроллера для сохранения должности (Department). В начале создаются объекты: DTO должности dto, сущность entity, сохранённая сущность saved и соответствующий DTO после сохранения savedDto. Затем с помощью Mockito настраиваются поведение зависимостей: toConverter конвертирует DTO в сущность, service.save сохраняет сущность и возвращает сохранённый объект, а toDtoConverter преобразует сохранённую сущность обратно в DTO. После этого вызывается метод контроллера controller.save(dto), и результат сохраняется в переменную result. В тесте проверяется, что операция прошла успешно: флаг isFlag() равен true, код ответа соответствует StatusCode.SUCCESS, сообщение равно "Success Save", а данные результата совпадают с savedDto. В конце с помощью verify проверяется, что методы конвертации и сохранения были вызваны один раз для соответствующих объектов. Тест полностью моделирует поток данных от входного DTO до результата контроллера при сохранении должности.
+
+```@Test
+void testUpdate() {
+        String id = "123";
+        DepartmentDto dto = new DepartmentDto(1L, "Dept name", "Some description");
+        Department entity = new Department();
+        Department updated = new Department();
+        DepartmentDto updatedDto = new DepartmentDto(1L, "Dept name", "Some description");
+
+        when(toConverter.convert(dto)).thenReturn(entity);
+        when(service.update(id, entity)).thenReturn(updated);
+        when(toDtoConverter.convert(updated)).thenReturn(updatedDto);
+
+        Result result = controller.update(id, dto);
+
+        assertTrue(result.isFlag());
+        assertEquals(StatusCode.SUCCESS, result.getCode());
+        assertEquals("Success Update", result.getMessage());
+        assertEquals(updatedDto, result.getData());
+
+        verify(toConverter).convert(dto);
+        verify(service).update(id, entity);
+        verify(toDtoConverter).convert(updated);
+}
+```
+
+Тестовый метод testUpdate() проверяет работу контроллера при обновлении должности (Department) по заданному идентификатору. В начале создаются необходимые объекты: идентификатор id, DTO должности dto, сущность entity, обновлённая сущность updated и соответствующий DTO после обновления updatedDto. С помощью Mockito настраивается поведение зависимостей: toConverter конвертирует входной DTO в сущность, service.update(id, entity) обновляет сущность по указанному идентификатору и возвращает обновлённый объект, а toDtoConverter преобразует обновлённую сущность обратно в DTO. Далее вызывается метод контроллера controller.update(id, dto), и результат сохраняется в переменную result. В тесте проверяется успешность операции: флаг isFlag() равен true, код ответа соответствует StatusCode.SUCCESS, сообщение равно "Success Update", а данные результата совпадают с updatedDto. В конце с помощью verify проверяется, что методы конвертации и обновления были вызваны один раз для соответствующих объектов. Тест полностью моделирует процесс обновления должности от входного DTO до окончательного результата контроллера.
+
+```@Test
+void testDelete() {
+        String id = "123";
+
+        Result result = controller.delete(id);
+
+        assertTrue(result.isFlag());
+        assertEquals(StatusCode.SUCCESS, result.getCode());
+        assertEquals("Success Delete", result.getMessage());
+        assertNull(result.getData());
+
+        verify(service).delete(id);
+}
+```
+Тестовый метод testDelete() проверяет работу контроллера при удалении должности (Department) по заданному идентификатору. В начале создаётся идентификатор id, по которому будет производиться удаление. Затем вызывается метод контроллера controller.delete(id), и результат сохраняется в переменную result. Тест проверяет, что операция удаления прошла успешно: флаг isFlag() равен true, код ответа соответствует StatusCode.SUCCESS, сообщение равно "Success Delete", а данные результата отсутствуют (null). В конце с помощью verify проверяется, что метод сервиса delete(id) был вызван ровно один раз с указанным идентификатором. Таким образом, тест моделирует полный процесс удаления должности через контроллер и проверяет корректность возвращаемого результата.
+
+```@Test
+void testFindAll() {
+        AppUser user = new AppUser();
+        UserDto dto = new UserDto(1L, "username", "ROLE_USER", "User", "Fio", "email@test.com",
+                "123456", "Grade", 1, null, false, 1L, "Dept",
+                List.of(), List.of(), List.of(), List.of(), List.of());
+
+        when(service.findAll()).thenReturn(List.of(user));
+        when(toDtoConverter.convert(user)).thenReturn(dto);
+
+        Result result = controller.findAll();
+
+        assertTrue(result.isFlag());
+        assertEquals(StatusCode.SUCCESS, result.getCode());
+        assertEquals("Success Find All", result.getMessage());
+        assertEquals(1, ((List<?>) result.getData()).size());
+
+        verify(service).findAll();
+        verify(toDtoConverter).convert(user);
+}
+```
+
+Тестовый метод testFindAll() проверяет работу контроллера при получении списка всех пользователей (AppUser). В начале создаются объекты: сущность пользователя user и соответствующий DTO dto, содержащий все необходимые поля, такие как идентификатор, имя пользователя, роль, ФИО, email, пароль, должность, отдел и другие связанные списки. С помощью Mockito настраивается поведение зависимостей: метод service.findAll() возвращает список пользователей, а toDtoConverter.convert(user) конвертирует сущность пользователя в DTO. Далее вызывается метод контроллера controller.findAll(), и результат сохраняется в переменную result. Тест проверяет успешность выполнения операции: флаг isFlag() равен true, код ответа соответствует StatusCode.SUCCESS, сообщение равно "Success Find All", а количество элементов в данных результата совпадает с ожидаемым (1 пользователь). В завершение с помощью verify проверяется, что методы сервиса и конвертера были вызваны ровно один раз. Таким образом, тест моделирует полный процесс получения списка пользователей через контроллер и проверяет корректность возвращаемого результата.
 
 ### Интеграционные тесты
 
-Представить код тестов и его пояснение
+```@Test
+@WithMockUser(username = "admin", authorities = {"ADMIN"})
+void testCreateDepartment() throws Exception {
+        DepartmentDto departmentDto = new DepartmentDto(null, "IT", "Information Technology Department");
+
+        mockMvc.perform(post("/departments")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(departmentDto)))
+                .andExpect(status().isOk());
+}
+```
+
+Интеграционный тест testCreateDepartment() проверяет работу REST-контроллера при создании новой должности (Department) через HTTP-запрос. Тест выполняется с авторизацией пользователя с именем admin и ролью ADMIN, что эмулируется аннотацией @WithMockUser. Сначала создаётся объект DepartmentDto с данными новой должности: названием "IT" и описанием "Information Technology Department". Далее с помощью mockMvc выполняется HTTP POST-запрос на эндпоинт /departments, где тело запроса содержит JSON-представление departmentDto, а заголовок указывает тип контента application/json. Тест проверяет, что сервер корректно обработал запрос, ожидая статус ответа 200 OK. Таким образом, тест моделирует полный интеграционный сценарий создания должности через REST API с учётом безопасности и проверки правильного ответа сервера.
+
+```@Test
+@WithMockUser(username = "admin", authorities = {"ADMIN"})
+void testAddUser_Valid() throws Exception {
+        UserDto dto = new UserDto(
+                null,
+                "testuser",
+                "ROLE_USER",
+                "User",
+                "Test Fio",
+                "email@test.com",
+                "123456789",
+                "Grade A",
+                1,
+                null,
+                false,
+                1L,
+                "Dept",
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList()
+        );
+
+        mockMvc.perform(post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isOk());
+}
+```
+
+Интеграционный тест testAddUser_Valid() проверяет работу REST-контроллера при добавлении нового пользователя (AppUser) через HTTP-запрос. Тест выполняется под пользователем с именем admin и ролью ADMIN, что задаётся аннотацией @WithMockUser. Сначала создаётся объект UserDto, содержащий все необходимые данные пользователя: имя пользователя, роль, тип, ФИО, email, пароль, должность, отдел и пустые списки связанных сущностей. Далее с помощью mockMvc выполняется HTTP POST-запрос на эндпоинт /users, где тело запроса содержит JSON-представление DTO, а заголовок указывает тип контента application/json. Тест проверяет корректность обработки запроса сервером, ожидая статус ответа 200 OK. Таким образом, тест моделирует полный интеграционный сценарий добавления нового пользователя через REST API с проверкой авторизации и успешного ответа сервера.
 
 ---
 
